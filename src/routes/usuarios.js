@@ -18,7 +18,6 @@ router.get('/', (req, res) => {
 })
 
 router.post('/', upload.single('imagen'), (req, res) => {
-    let path = req.file.destination + '/' + req.file.filename;
 
     let datos = req.body;
     controller.crearUsuario({
@@ -27,13 +26,19 @@ router.post('/', upload.single('imagen'), (req, res) => {
         password: datos.password
     })
         .then((usuario) => {
-            controller.modificarFoto(datos.email, path)
+            if (req.file) {
+                let path = req.file.destination + '/' + req.file.filename;
+                controller.modificarFoto(datos.email, path)
+            }
             res.status(200).json(usuario)
         })
         .catch(err => {
-            fs.unlink(path, (err) => {
-                console.log(err);
-            })
+            if (req.file) {
+                let path = req.file.destination + '/' + req.file.filename;
+                fs.unlink(path, (err) => {
+                    console.log(err);
+                })
+            }
             res.status(400).json(err);
         })
 
