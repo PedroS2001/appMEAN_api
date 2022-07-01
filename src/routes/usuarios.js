@@ -4,8 +4,6 @@ const fs = require('fs');
 
 const controller = require('../controllers/user.controller');
 
-
-
 const upload = require('../libs/storage');
 
 

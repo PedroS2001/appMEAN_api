@@ -1,12 +1,13 @@
 const Usuario = require('../models/UsuarioModel');
-
+const bcrypt = require('bcrypt');
 
 async function crearUsuario(datos) {
     let usuario = new Usuario({
         nombre: datos.nombre,
         email: datos.email,
-        password: datos.password
+        password: bcrypt.hashSync(datos.password, 10)
     });
+
 
     return await usuario.save();
 }
