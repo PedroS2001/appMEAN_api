@@ -1,7 +1,12 @@
 const express = require('express');
 const router = express.Router();
+const fs = require('fs');
 
 const controller = require('../controllers/user.controller');
+
+
+
+const upload = require('../libs/storage');
 
 
 router.get('/', (req, res) => {
@@ -12,7 +17,9 @@ router.get('/', (req, res) => {
         .catch(err => res.status(400).json(err))
 })
 
-router.post('/', (req, res) => {
+router.post('/', upload.single('imagen'), (req, res) => {
+    let path = req.file.destination + '/' + req.file.filename;
+
     let datos = req.body;
     controller.crearUsuario({
         nombre: datos.nombre,
@@ -20,9 +27,15 @@ router.post('/', (req, res) => {
         password: datos.password
     })
         .then((usuario) => {
+            controller.modificarFoto(datos.email, path)
             res.status(200).json(usuario)
         })
-        .catch(err => res.status(400).json(err))
+        .catch(err => {
+            fs.unlink(path, (err) => {
+                console.log(err);
+            })
+            res.status(400).json(err);
+        })
 
 })
 

@@ -34,9 +34,23 @@ async function eliminarUsuario(email) {
     })
 }
 
+async function modificarFoto(email, path) {
+    return await Usuario.updateOne(
+        {
+            email: email
+        },
+        {
+            $set: {
+                imagen: path
+            }
+        })
+}
+
+
 module.exports = {
     "crearUsuario": crearUsuario,
     "obtenerUsuarios": obtenerUsuarios,
     "editarUsuario": editarUsuario,
-    "eliminarUsuario": eliminarUsuario
+    "eliminarUsuario": eliminarUsuario,
+    "modificarFoto": modificarFoto
 }
