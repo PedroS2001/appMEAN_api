@@ -24,7 +24,7 @@ async function editarUsuario(email, datos) {
         {
             $set: {
                 nombre: datos.nombre,
-                password: datos.password,
+                password: bcrypt.hashSync(datos.password, 10)
             }
         })
 }

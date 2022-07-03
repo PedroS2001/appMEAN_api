@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const fs = require('fs');
+const verificarToken = require('../middlewares/auth');
 
 const controller = require('../controllers/user.controller');
 
@@ -15,7 +16,7 @@ router.get('/', (req, res) => {
         .catch(err => res.status(400).json(err))
 })
 
-router.post('/', upload.single('imagen'), (req, res) => {
+router.post('/', verificarToken, upload.single('imagen'), (req, res) => {
 
     let datos = req.body;
     controller.crearUsuario({
@@ -42,16 +43,25 @@ router.post('/', upload.single('imagen'), (req, res) => {
 
 })
 
-router.put('/:email', (req, res) => {
+router.put('/', verificarToken, upload.single('imagen'), (req, res) => {
     let datos = req.body;
-    let email = req.params.email;
-    controller.editarUsuario(email, datos)
+    controller.editarUsuario(req.body.email, datos)
         .then((rta) => {
             if (rta.modifiedCount) {
+                if (req.file) {
+                    let path = req.file.destination + '/' + req.file.filename;
+                    controller.modificarFoto(datos.email, path)
+                }
                 res.status(200).json({
                     'msg': "Se modifico el usuario correctamente"
                 })
             } else {
+                if (req.file) {
+                    let path = req.file.destination + '/' + req.file.filename;
+                    fs.unlink(path, (err) => {
+                        console.log(err);
+                    })
+                }
                 res.status(401).json({
                     'msg': "No se pudo modificar el usuario"
                 })
@@ -60,8 +70,8 @@ router.put('/:email', (req, res) => {
         .catch(err => res.status(400).json(err))
 })
 
-router.delete('/:email', (req, res) => {
-    let email = req.params.email;
+router.delete('/', verificarToken, (req, res) => {
+    let email = req.body.email;
     controller.eliminarUsuario(email)
         .then((rta) => {
             if (rta.deletedCount) {
