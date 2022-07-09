@@ -72,6 +72,17 @@ router.put('/', verificarToken, upload.single('imagen'), (req, res) => {
 
 router.delete('/', verificarToken, (req, res) => {
     let email = req.body.email;
+
+    controller.traerUnUsuario(email)
+        .then(user => {
+            let path = './public' + user.imagen
+            console.log(path);
+            fs.unlink(path, (err) => {
+                console.log(err);
+            })
+        })
+        .catch(err => console.log('No tiene imagen'));
+
     controller.eliminarUsuario(email)
         .then((rta) => {
             if (rta.deletedCount) {

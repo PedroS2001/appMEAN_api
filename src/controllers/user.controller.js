@@ -12,6 +12,12 @@ async function crearUsuario(datos) {
     return await usuario.save();
 }
 
+async function traerUnUsuario(email) {
+    return await Usuario.findOne({
+        email: email
+    })
+}
+
 async function obtenerUsuarios() {
     return await Usuario.find();
 }
@@ -53,5 +59,6 @@ module.exports = {
     "obtenerUsuarios": obtenerUsuarios,
     "editarUsuario": editarUsuario,
     "eliminarUsuario": eliminarUsuario,
-    "modificarFoto": modificarFoto
+    "modificarFoto": modificarFoto,
+    "traerUnUsuario": traerUnUsuario
 }
