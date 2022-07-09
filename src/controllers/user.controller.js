@@ -23,7 +23,7 @@ async function obtenerUsuarios() {
 }
 
 async function editarUsuario(email, datos) {
-    return await Usuario.updateOne(
+    return await Usuario.findOneAndUpdate(
         {
             email: email
         },
@@ -32,6 +32,10 @@ async function editarUsuario(email, datos) {
                 nombre: datos.nombre,
                 password: bcrypt.hashSync(datos.password, 10)
             }
+        },
+        {
+            new: true,
+            rawResult: true
         })
 }
 

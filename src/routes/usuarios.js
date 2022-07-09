@@ -33,7 +33,7 @@ router.post('/', verificarToken, upload.single('imagen'), (req, res) => {
         })
         .catch(err => {
             if (req.file) {
-                let path = req.file.destination + '/' + req.file.filename;
+                let path = req.file.destination.substring(8) + '/' + req.file.filename;
                 fs.unlink(path, (err) => {
                     console.log(err);
                 })
@@ -44,20 +44,25 @@ router.post('/', verificarToken, upload.single('imagen'), (req, res) => {
 })
 
 router.put('/', verificarToken, upload.single('imagen'), (req, res) => {
+
     let datos = req.body;
-    controller.editarUsuario(req.body.email, datos)
+    controller.editarUsuario(datos.email, datos)
         .then((rta) => {
-            if (rta.modifiedCount) {
+            if (rta.value != null) {
                 if (req.file) {
-                    let path = req.file.destination + '/' + req.file.filename;
-                    controller.modificarFoto(datos.email, path)
+                    let path = req.file.destination.substring(8) + '/' + req.file.filename;
+                    controller.modificarFoto(datos.email, path);
+                    let old = './public/' + rta.value.imagen;
+                    fs.unlink(old, (err) => {
+                        console.log(err);
+                    })
                 }
                 res.status(200).json({
                     'msg': "Se modifico el usuario correctamente"
                 })
             } else {
                 if (req.file) {
-                    let path = req.file.destination + '/' + req.file.filename;
+                    let path = './public/' + req.file.destination.substring(8) + '/' + req.file.filename;
                     fs.unlink(path, (err) => {
                         console.log(err);
                     })
