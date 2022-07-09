@@ -26,7 +26,7 @@ router.post('/', verificarToken, upload.single('imagen'), (req, res) => {
     })
         .then((usuario) => {
             if (req.file) {
-                let path = req.file.destination + '/' + req.file.filename;
+                let path = req.file.destination.substring(8) + '/' + req.file.filename;
                 controller.modificarFoto(datos.email, path)
             }
             res.status(200).json(usuario)
